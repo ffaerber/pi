@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json /usr/src/app/
-RUN apt-get install -y build-essential node-gyp
+RUN apt-get install -y build-essential node-gyp dphys-swapfile
 RUN npm install
 
 # Bundle app source
