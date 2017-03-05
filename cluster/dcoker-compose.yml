@@ -1,0 +1,9 @@
+ui:
+  image: portainer/portainer:arm
+  restart: always
+  volumes:
+    - '/var/run/docker.sock:/var/run/docker.sock'
+  expose:
+    - 9000
+  ports:
+    - 80:9000
