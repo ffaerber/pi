@@ -1,5 +1,13 @@
 version: '3'
 
+networks:
+  outside:
+    driver: overlay
+    external: true
+  inside:
+    driver: overlay
+    external: false
+
 volumes:
   redis-data:
     driver: local
@@ -12,6 +20,8 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock'
     ports:
       - 80:9000
+    networks:
+      - outside
     deploy:
       placement:
         constraints:
@@ -21,7 +31,9 @@ services:
     image: alexellis2/guid-generator-arm:0.1
     restart: always
     ports:
-      - 80:9000
+      - 9000:9000
+    networks:
+      - outside
     deploy:
       replicas: 5
       placement:
@@ -33,6 +45,8 @@ services:
     restart: always
     ports:
       - '6379:6379'
+    networks:
+      - inside
     volumes:
       - redis-data:/data
     deploy:
