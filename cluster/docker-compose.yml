@@ -10,14 +10,23 @@ services:
     restart: always
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
-    expose:
-      - 9000
     ports:
       - 80:9000
     deploy:
       placement:
         constraints:
           - node.role == manager
+
+  guid:
+    image: alexellis2/guid-generator-arm:0.1
+    restart: always
+    ports:
+      - 80:9000
+    deploy:
+      replicas: 5
+      placement:
+        constraints:
+          - node.role != manager
 
   redis:
     image: hypriot/rpi-redis
