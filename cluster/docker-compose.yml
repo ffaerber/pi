@@ -9,7 +9,7 @@ services:
     ports:
       - "80:9000"
     networks:
-      - outside
+      - web_tier
     deploy:
       placement:
         constraints:
@@ -49,12 +49,8 @@ services:
           - node.role != manager
 
 networks:
-  outside:
-    driver: overlay
-    ipam:
-      driver: default
-      config:
-        - subnet: 20.0.14.0/24
+  web_tier:
+    driver: bridge
 
 volumes:
   redis-data:
