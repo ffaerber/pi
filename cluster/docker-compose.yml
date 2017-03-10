@@ -1,17 +1,5 @@
 version: '3'
 
-networks:
-  outside:
-    driver: overlay
-    external: true
-  inside:
-    driver: overlay
-    external: false
-
-volumes:
-  redis-data:
-    driver: local
-
 services:
   portainer:
     image: portainer/portainer:arm
@@ -19,19 +7,18 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
     ports:
-      - 80:9000
+      - "80:9000"
     networks:
       - outside
     deploy:
       placement:
         constraints:
           - node.role == manager
-
   guid:
     image: alexellis2/guid-generator-arm:0.1
     restart: always
     ports:
-      - 9000:9000
+      - "9000:9000"
     networks:
       - outside
     deploy:
@@ -39,17 +26,27 @@ services:
       placement:
         constraints:
           - node.role != manager
-
   redis:
     image: hypriot/rpi-redis
     restart: always
     ports:
-      - '6379:6379'
-    networks:
-      - inside
+      - "6379:6379"
+
     volumes:
       - redis-data:/data
     deploy:
       placement:
         constraints:
           - node.role != manager
+
+networks:
+  outside:
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+        - subnet: 20.0.14.0/24
+
+volumes:
+  redis-data:
+    driver: local
