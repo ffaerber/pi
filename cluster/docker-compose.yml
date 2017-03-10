@@ -1,18 +1,10 @@
-version: '2'
+version: '3'
 
 volumes:
   redis-data:
     driver: local
 
 services:
-  redis:
-    image: hypriot/rpi-redis
-    restart: always
-    ports:
-      - '6379:6379'
-    volumes:
-      - redis-data:/data
-
   portainer:
     image: portainer/portainer:arm
     restart: always
@@ -22,3 +14,19 @@ services:
       - 9000
     ports:
       - 80:9000
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  redis:
+    image: hypriot/rpi-redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    deploy:
+      placement:
+        constraints:
+          - node.role != manager
