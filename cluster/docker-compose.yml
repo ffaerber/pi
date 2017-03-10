@@ -6,6 +6,8 @@ services:
     restart: always
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
+    expose:
+      - "9000"
     ports:
       - "80:9000"
     networks:
@@ -52,7 +54,7 @@ services:
 
 networks:
   web_tier:
-    driver: bridge
+
 
 volumes:
   redis-data:
