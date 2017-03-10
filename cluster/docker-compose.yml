@@ -22,7 +22,17 @@ services:
     networks:
       - outside
     deploy:
-      replicas: 5
+      replicas: 2
+      placement:
+        constraints:
+          - node.role != manager
+  hello:
+    image: alexellis2/arm-alpinehello
+    restart: always
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 2
       placement:
         constraints:
           - node.role != manager
@@ -31,7 +41,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-
     volumes:
       - redis-data:/data
     deploy:
