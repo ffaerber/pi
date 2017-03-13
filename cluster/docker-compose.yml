@@ -6,8 +6,6 @@ services:
     restart: always
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
-    expose:
-      - "9000"
     ports:
       - "80:9000"
     networks:
@@ -16,30 +14,20 @@ services:
       placement:
         constraints:
           - node.role == manager
-  guid:
-    image: alexellis2/guid-generator-arm:0.1
-    restart: always
-    ports:
-      - "9000:9000"
-    networks:
-      - web_tier
-    deploy:
-      replicas: 2
-      placement:
-        constraints:
-          - node.role != manager
-  hello:
-    image: alexellis2/arm-alpinehello
+
+  koa_on_arm:
+    image: ffaerber/koa-on-arm:latest
     restart: always
     ports:
       - "3000:3000"
     networks:
       - web_tier
     deploy:
-      replicas: 2
+      replicas: 3
       placement:
         constraints:
           - node.role != manager
+
   redis:
     image: hypriot/rpi-redis
     restart: always
