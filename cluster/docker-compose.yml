@@ -8,8 +8,6 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock'
     ports:
       - "80:9000"
-    networks:
-      - web_tier
     deploy:
       placement:
         constraints:
@@ -20,12 +18,8 @@ services:
     restart: always
     ports:
       - "1883:1883"
-    networks:
-      - web_tier
     environment:
       REDIS_HOST: redis
-    links:
-      - redis
     deploy:
       placement:
         constraints:
@@ -36,8 +30,6 @@ services:
     restart: always
     ports:
       - "3000:3000"
-    networks:
-      - web_tier
     deploy:
       replicas: 2
       placement:
@@ -55,10 +47,6 @@ services:
       placement:
         constraints:
           - node.role != manager
-
-networks:
-  web_tier:
-
 
 volumes:
   redis-data:

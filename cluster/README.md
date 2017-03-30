@@ -80,6 +80,7 @@ https://docs.docker.com/compose/compose-file/
 - get service info `docker service inspect whoami`
 - `docker service ps whoami`
 
+- tail logs from running conatiner `sudo docker exec -i -t 665b4a1e17b6 /bin/bash`
 
 ## Docker Compose bundles for Swarm Mode
 - https://docs.docker.com/compose/bundles/
