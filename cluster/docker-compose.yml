@@ -15,6 +15,20 @@ services:
         constraints:
           - node.role == manager
 
+  mqtt_broker_on_arm:
+    image: ffaerber/mqtt-broker-on-arm:latest
+    restart: always
+    ports:
+      - "1883:1883"
+    networks:
+      - web_tier
+    environment:
+      REDIS_HOST: redis
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
   koa_on_arm:
     image: ffaerber/koa-on-arm:latest
     restart: always
