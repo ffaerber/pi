@@ -50,9 +50,9 @@ services:
         constraints:
           - node.role != manager
 
-  networks:
-    mynet:
-      driver: overlay
+networks:
+  mynet:
+    driver: overlay
 
 volumes:
   redis-data:
