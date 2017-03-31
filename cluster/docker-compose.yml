@@ -57,7 +57,9 @@ networks:
         - subnet: 172.177.0.0/16
   mynet:
     driver: overlay
-
+      ipam:
+        config:
+          - subnet: 192.168.0.0/16
 
 volumes:
   redis-data:
