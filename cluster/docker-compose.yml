@@ -18,6 +18,8 @@ services:
       - "1883:1883"
     environment:
       REDIS_HOST: redis
+    networks:
+      - mynet
     deploy:
       placement:
         constraints:
@@ -35,6 +37,10 @@ services:
 
   redis:
     image: hypriot/rpi-redis
+    networks:
+      mynet:
+        aliases:
+          - redis
     ports:
       - "6379:6379"
     volumes:
@@ -45,10 +51,9 @@ services:
           - node.role != manager
 
 networks:
-  default:
-    ipam:
-      config:
-        - subnet: 192.168.0.0/16
+  mynet:
+    driver: overlay
+
 
 volumes:
   redis-data:
