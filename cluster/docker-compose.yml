@@ -19,7 +19,7 @@ services:
     environment:
       REDIS_HOST: redis
     networks:
-      - mycluster_mynet
+      - mynet
     deploy:
       placement:
         constraints:
@@ -38,7 +38,9 @@ services:
   redis:
     image: hypriot/rpi-redis
     networks:
-      - mycluster_mynet
+      mynet:
+        aliases:
+          - redis
     ports:
       - "6379:6379"
     volumes:
@@ -49,7 +51,7 @@ services:
           - node.role != manager
 
 networks:
-  mycluster_mynet:
+  mynet:
     driver: overlay
 
 networks:
