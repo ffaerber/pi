@@ -39,13 +39,8 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
+      - /data
     deploy:
       placement:
         constraints:
           - node.hostname == odroid
-
-
-volumes:
-  redis-data:
-    driver: local
