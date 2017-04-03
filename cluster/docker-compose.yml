@@ -20,7 +20,7 @@ services:
     environment:
       REDIS_HOST: redis
     networks:
-      - intern
+      - mynet
     deploy:
       placement:
         constraints:
@@ -39,7 +39,7 @@ services:
   redis:
     image: hypriot/rpi-redis
     networks:
-      intern:
+      mynet:
         aliases:
           - redis
     ports:
@@ -52,8 +52,7 @@ services:
           - node.role != manager
 
 networks:
-  intern:
-    internal: true
+  mynet:
     driver: overlay
 
 
