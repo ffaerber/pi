@@ -13,17 +13,6 @@ services:
         constraints:
           - node.role == manager
 
-  visualizer:
-    image: alexellis2/visualizer-arm:latest
-    volumes:
-      - '/var/run/docker.sock,dst=/var/run/docker.sock'
-    ports:
-      - "8080:8080"
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-
   mqtt_broker_on_arm:
     image: ffaerber/mqtt-broker-on-arm:latest
     ports:
@@ -31,7 +20,7 @@ services:
     environment:
       REDIS_HOST: redis
     networks:
-      - mynet
+      - intern
     deploy:
       placement:
         constraints:
@@ -50,7 +39,7 @@ services:
   redis:
     image: hypriot/rpi-redis
     networks:
-      mynet:
+      intern:
         aliases:
           - redis
     ports:
@@ -63,7 +52,8 @@ services:
           - node.role != manager
 
 networks:
-  mynet:
+  intern:
+    internal: true
     driver: overlay
 
 
