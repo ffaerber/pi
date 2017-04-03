@@ -50,15 +50,11 @@ services:
     ports:
       - "8545:8545"
     command: geth --ipcapi admin,eth --rpcapi eth,web3 --rpc
-    volumes:
-      - ethereum-data:~/.ethereum
     deploy:
       placement:
         constraints:
           - node.hostname == odroid
 
 volumes:
-  ethereum-data:
-    driver: local
   redis-data:
     driver: local
