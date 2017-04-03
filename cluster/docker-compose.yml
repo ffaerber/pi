@@ -43,7 +43,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role != manager
+          - node.name == odroid
 
 
 volumes:
