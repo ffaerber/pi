@@ -1,12 +1,24 @@
 version: '3'
 
 services:
+
   portainer:
     image: portainer/portainer:arm
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
     ports:
-      - "80:9000"
+      - "9000:9000"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  visualizer:
+    image: alexellis2/visualizer-arm:latest
+    volumes:
+      - '/var/run/docker.sock,dst=/var/run/docker.sock'
+    ports:
+      - "8080:8080"
     deploy:
       placement:
         constraints:
