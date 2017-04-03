@@ -43,7 +43,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.name == pi4
+          - node.hostname == odroid
 
 
 volumes:
