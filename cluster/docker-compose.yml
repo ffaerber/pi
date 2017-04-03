@@ -46,7 +46,7 @@ services:
           - node.hostname == odroid
 
   geth:
-    image: ffaeeber/geth-arm:latest
+    image: ffaerber/geth-arm:latest
     ports:
       - "8545:8545"
     command: geth --ipcapi admin,eth --rpcapi eth,web3 --rpc
