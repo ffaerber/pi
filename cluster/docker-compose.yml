@@ -51,7 +51,7 @@ services:
       - "8545:8545"
     command: geth --ipcapi admin,eth --rpcapi eth,web3 --rpc
     volumes:
-      - redis-data:~/.ethereum
+      - ethereum-data:~/.ethereum
     deploy:
       placement:
         constraints:
