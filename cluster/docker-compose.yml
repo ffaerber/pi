@@ -19,8 +19,6 @@ services:
       - "1883:1883"
     environment:
       REDIS_HOST: redis
-    networks:
-      - mynet
     deploy:
       placement:
         constraints:
@@ -38,10 +36,6 @@ services:
 
   redis:
     image: hypriot/rpi-redis
-    networks:
-      mynet:
-        aliases:
-          - redis
     ports:
       - "6379:6379"
     volumes:
@@ -50,10 +44,6 @@ services:
       placement:
         constraints:
           - node.role != manager
-
-networks:
-  mynet:
-    driver: overlay
 
 
 volumes:
