@@ -49,6 +49,8 @@ services:
     image: ffaerber/geth-arm:latest
     ports:
       - "8545:8545"
+    volumes:
+      - ethereum-data:/root/.ethereum
     command: geth --ipcapi admin,eth --rpcapi eth,web3 --rpc
     deploy:
       placement:
@@ -57,4 +59,6 @@ services:
 
 volumes:
   redis-data:
+    driver: local
+  ethereum-data:
     driver: local
