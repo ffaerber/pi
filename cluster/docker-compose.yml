@@ -57,6 +57,18 @@ services:
         constraints:
           - node.hostname == pi4
 
+  geth_light:
+    image: ffaerber/geth-arm:latest
+    ports:
+      - "8545:8545"
+    volumes:
+      - ethereum_data:/root/.ethereum
+    command: geth --light --lightserv 25 --lightpeers 50
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == odroid
+
 volumes:
   redis_data:
     driver: local
