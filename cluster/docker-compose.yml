@@ -39,7 +39,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
+      - redis_data:/data
     deploy:
       placement:
         constraints:
@@ -50,15 +50,15 @@ services:
     ports:
       - "8545:8545"
     volumes:
-      - ethereum-data:/root/.ethereum
-    command: geth --ipcapi admin,eth --rpcapi eth,web3 --rpc
+      - ethereum_data:/root/.ethereum
+    command: geth --ipcapi admin,eth --rpcapi eth,web3 --rpc #command: geth --light --lightserv 25 --lightpeers 50
     deploy:
       placement:
         constraints:
-          - node.hostname == odroid
+          - node.hostname == pi4
 
 volumes:
-  redis-data:
+  redis_data:
     driver: local
-  ethereum-data:
+  ethereum_data:
     driver: local
