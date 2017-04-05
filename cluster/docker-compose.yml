@@ -51,7 +51,7 @@ services:
       - "8545:8545"
     volumes:
       - ethereum_data:/root/.ethereum
-    command: geth --light
+    command: geth --fast
     deploy:
       placement:
         constraints:
