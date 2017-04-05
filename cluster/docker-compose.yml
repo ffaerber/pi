@@ -51,11 +51,11 @@ services:
       - "8545:8545"
     volumes:
       - ethereum_data:/root/.ethereum
-    command: geth --light --lightserv 25 --lightpeers 50
+    command: geth --light --lightserv 25 --lightpeers 20
     deploy:
       placement:
         constraints:
-          - node.hostname == pi4
+          - node.hostname == odroid
 
 
 
