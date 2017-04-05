@@ -51,7 +51,7 @@ services:
       - "8545:8545"
     volumes:
       - ethereum_data:/root/.ethereum
-    command: geth --fast
+    command: geth --fast --cache 64 --maxpeers 5 
     deploy:
       placement:
         constraints:
