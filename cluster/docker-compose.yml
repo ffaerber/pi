@@ -51,7 +51,7 @@ services:
       - "8545:8545"
     volumes:
       - ethereum_data:/root/.ethereum
-    command: geth --light --lightserv 25 --lightpeers 20 --rpc
+    command: geth --light --lightserv 25 --lightpeers 20
     deploy:
       placement:
         constraints:
