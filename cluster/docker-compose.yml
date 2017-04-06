@@ -40,9 +40,6 @@ services:
       - "548:548"
     environment:
       PASSWORD: yourpassword
-    volumes:
-      - /backup:/backup
-    command: ./start.sh
     deploy:
       placement:
         constraints:
