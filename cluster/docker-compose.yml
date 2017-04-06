@@ -41,7 +41,7 @@ services:
     environment:
       PASSWORD: yourpassword
     volumes:
-      - /mnt/backup:/backup
+      - /backup:/backup
     deploy:
       placement:
         constraints:
@@ -70,8 +70,6 @@ services:
       placement:
         constraints:
           - node.hostname == odroid
-
-
 
 volumes:
   redis_data:
