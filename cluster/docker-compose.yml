@@ -47,15 +47,14 @@ services:
 
   geth:
     image: ffaerber/geth-arm:latest
-    ports:
-      - "8545:8545"
     volumes:
       - ethereum_data:/root/.ethereum
-    command: geth --fast --cache 64 --maxpeers 5 
+    command: geth --light
     deploy:
+      replicas: 5
       placement:
         constraints:
-          - node.hostname == odroid
+          - node.role != manager
 
 
 
