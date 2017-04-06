@@ -34,6 +34,19 @@ services:
         constraints:
           - node.role != manager
 
+  timemachine:
+    image: ffaerber/timemachine-arm:latest
+    ports:
+      - "548:548"
+    environment:
+      PASSWORD: yourpassword
+    volumes:
+      - /mnt/backup:/backup
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == pi5
+
   redis:
     image: hypriot/rpi-redis
     ports:
