@@ -42,6 +42,7 @@ services:
       PASSWORD: yourpassword
     volumes:
       - /backup:/backup
+    command: ./start.sh
     deploy:
       placement:
         constraints:
