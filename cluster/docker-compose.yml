@@ -47,11 +47,16 @@ services:
 
   geth:
     image: ffaerber/geth-arm:latest
+    ports:
+      - "8545:8545"
+      - "30303:30303"
     volumes:
       - ethereum_data:/root/.ethereum
-    command: geth --light
+    command: geth --rpc --rpcaddr "0.0.0.0"
     deploy:
-      replicas: 5
+      placement:
+        constraints:
+          - node.hostname == odroid
 
 
 
