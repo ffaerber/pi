@@ -1,0 +1,125 @@
+version: '3'
+
+services:
+
+  traefik:
+    image: hypriot/rpi-traefik
+    command: --docker --docker.swarmmode --docker.domain=ffaerber.com --docker.watch --web --logLevel=DEBUG
+    networks:
+      - traefik-net
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  portainer:
+    image: portainer/portainer:arm
+    networks:
+      - traefik-net
+    depends_on:
+      - traefik
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      labels:
+        - "traefik.backend=portainer"
+        - "traefik.frontend.rule=Host:portainer.ffaerber.com"
+        - "traefik.port=9000"
+      placement:
+        constraints:
+          - node.role == manager
+
+  whoami:
+    image: hypriot/rpi-whoami
+    networks:
+      - traefik-net
+    depends_on:
+      - traefik
+    deploy:
+      labels:
+        - "traefik.backend=whoami"
+        - "traefik.frontend.rule=Host:whoami.ffaerber.com"
+        - "traefik.port=8000"
+      replicas: 20
+      placement:
+        constraints:
+          - node.role != manager
+
+  koa_on_arm:
+    image: ffaerber/koa-on-arm:latest
+    networks:
+      - traefik-net
+    depends_on:
+      - traefik
+    deploy:
+      labels:
+        - "traefik.backend=koa"
+        - "traefik.frontend.rule=Host:koa.ffaerber.com"
+        - "traefik.port=3000"
+      replicas: 4
+      placement:
+        constraints:
+          - node.role != manager
+
+  mosca:
+    image: ffaerber/mqtt-broker-on-arm:latest
+    networks:
+      - traefik-net
+    depends_on:
+      - traefik
+      - redis
+    environment:
+      REDIS_HOST: redis
+    ports:
+      - "1883:1883"
+    deploy:
+      labels:
+        - "traefik.backend=mosca"
+        - "traefik.frontend.rule=Host:mosca.ffaerber.com"
+        - "traefik.port=1883"
+      placement:
+        constraints:
+          - node.role == manager
+
+  redis:
+    image: hypriot/rpi-redis
+    networks:
+      - traefik-net
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == odroid
+
+  geth:
+    image: ffaerber/geth-arm:latest
+    ports:
+      - "8545:8545"
+      - "30303:30303"
+    volumes:
+      - ethereum_data:/root/.ethereum
+    command: geth --cache=32 --syncmode=light --rpc --rpcaddr "0.0.0.0"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == pi3
+
+
+volumes:
+  redis_data:
+    driver: local
+  ethereum_data:
+    driver: local
+
+networks:
+  traefik-net:
