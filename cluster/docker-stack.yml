@@ -29,7 +29,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - [node.role == manager]
 
   portainer:
     image: portainer/portainer:arm
@@ -46,7 +46,7 @@ services:
         - "traefik.port=9000"
       placement:
         constraints:
-          - node.role == manager
+          - [node.role == manager]
 
   whoami:
     image: hypriot/rpi-whoami
@@ -62,7 +62,7 @@ services:
       replicas: 20
       placement:
         constraints:
-          - node.role != manager
+          - [node.role != manager]
 
   koa_on_arm:
     image: ffaerber/koa-on-arm:latest
@@ -78,7 +78,7 @@ services:
       replicas: 10
       placement:
         constraints:
-          - node.role != manager
+          - [node.role != manager]
 
   mosca:
     image: ffaerber/mqtt-broker-on-arm:latest
@@ -96,7 +96,7 @@ services:
         - "traefik.port=1883"
       placement:
         constraints:
-          - node.role == manager
+          - [node.role == manager]
 
   socketio:
     image: ffaerber/socketio-arm:latest
@@ -114,7 +114,7 @@ services:
         - "traefik.port=3000"
       placement:
         constraints:
-          - node.role == manager
+          - [node.role == manager]
 
   redis:
     image: hypriot/rpi-redis
@@ -127,7 +127,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.hostname == odroid
+          - [node.hostname == odroid]
 
   geth:
     image: ffaerber/geth-arm:latest
@@ -140,7 +140,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.hostname == pi3
+          - [node.hostname == pi3]
 
 volumes:
   redis_data:
