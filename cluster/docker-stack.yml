@@ -9,11 +9,10 @@ services:
       - --docker.swarmmode
       - --docker.domain=ffaerber.com
       - --defaultEntryPoints=http,https
-      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+      - --entrypoints=Name:http Address::80
       - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
       - --entryPoints=Name:ws Address::3000
       - --docker.watch
-      - --logLevel=DEBUG
       - --web
     networks:
       - traefik-net
@@ -73,8 +72,8 @@ services:
       - traefik
     deploy:
       labels:
-        - "traefik.backend=www"
-        - "traefik.frontend.rule=Host:www.ffaerber.com"
+        - "traefik.backend=koa"
+        - "traefik.frontend.rule=Host:koa.ffaerber.com"
         - "traefik.port=3000"
       replicas: 10
       placement:
