@@ -7,12 +7,12 @@ services:
     command:
       - --docker
       - --docker.swarmmode
+      - --docker.watch
       - --docker.domain=ffaerber.com
       - --defaultEntryPoints=http,https
       - --entrypoints=Name:http Address::80
       - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
-      - --entryPoints=Name:ws Address::3000
-      - --docker.watch
+      - --entryPoints=Name:ws Address::80
       - --web
     networks:
       - traefik
