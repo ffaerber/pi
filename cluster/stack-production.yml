@@ -15,7 +15,7 @@ services:
       - --docker.watch
       - --web
     networks:
-      - traefik-net
+      - production_traefik
     ports:
       - "80:80"
       - "443:443"
@@ -34,7 +34,7 @@ services:
   portainer:
     image: portainer/portainer:arm
     networks:
-      - traefik-net
+      - production_traefik
     depends_on:
       - traefik
     volumes:
@@ -51,7 +51,7 @@ services:
   whoami:
     image: hypriot/rpi-whoami
     networks:
-      - traefik-net
+      - production_traefik
     depends_on:
       - traefik
     deploy:
@@ -67,7 +67,7 @@ services:
   koa_on_arm:
     image: ffaerber/koa-on-arm:latest
     networks:
-      - traefik-net
+      - production_traefik
     depends_on:
       - traefik
     deploy:
@@ -83,7 +83,7 @@ services:
   mosca:
     image: ffaerber/mqtt-broker-on-arm:latest
     networks:
-      - traefik-net
+      - production_traefik
     depends_on:
       - traefik
       - redis
@@ -103,7 +103,7 @@ services:
     environment:
       DEBUG: socket.io*
     networks:
-      - traefik-net
+      - production_traefik
     depends_on:
       - traefik
     deploy:
@@ -119,7 +119,7 @@ services:
   redis:
     image: hypriot/rpi-redis
     networks:
-      - traefik-net
+      - production_traefik
     ports:
       - "6379:6379"
     volumes:
@@ -149,7 +149,7 @@ volumes:
     driver: local
 
 networks:
-  traefik-net:
+  traefik:
 
 secrets:
   certificate_crt:
