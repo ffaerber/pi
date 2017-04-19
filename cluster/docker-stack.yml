@@ -73,10 +73,9 @@ services:
       - traefik
     deploy:
       labels:
-        - "traefik.backend=koa"
-        - "traefik.frontend.rule=Host:koa.ffaerber.com"
+        - "traefik.backend=www"
+        - "traefik.frontend.rule=Host:www.ffaerber.com"
         - "traefik.port=3000"
-        - "traefik.protocol=https"
       replicas: 10
       placement:
         constraints:
