@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 
 services:
 
@@ -9,20 +9,25 @@ services:
       - --docker.swarmmode
       - --docker.domain=ffaerber.com
       - --defaultEntryPoints=http,https
-      - --entryPoints=Name:http Address::80
+      - --entrypoints=Name:http Address::80
+      - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
       - --entryPoints=Name:ws Address::3000
       - --docker.watch
       - --logLevel=DEBUG
       - --web
+
     networks:
       - traefik-net
     ports:
       - "80:80"
-      - "8080:8080"
       - "443:443"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev/null:/traefik.toml
+    secrets:
+      - private_key
+      - certificate_crt
     deploy:
       placement:
         constraints:
@@ -67,14 +72,12 @@ services:
       - traefik-net
     depends_on:
       - traefik
-    secrets:
-      - private_key
-      - certificate_crt
     deploy:
       labels:
         - "traefik.backend=koa"
         - "traefik.frontend.rule=Host:koa.ffaerber.com"
         - "traefik.port=3000"
+        - "traefik.protocol=https"
       replicas: 10
       placement:
         constraints:
@@ -116,7 +119,6 @@ services:
         constraints:
           - node.role == manager
 
-
   redis:
     image: hypriot/rpi-redis
     networks:
@@ -142,7 +144,6 @@ services:
       placement:
         constraints:
           - node.hostname == pi3
-
 
 volumes:
   redis_data:
