@@ -9,17 +9,15 @@ services:
       - --docker.swarmmode
       - --docker.watch
       - --docker.domain=ffaerber.com
-      - --defaultEntryPoints=http,https
+      - --defaultEntryPoints=http,https,ws,wss
       - --entrypoints=Name:http Address::80
       - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
-      - --entryPoints=Name:ws Address::3000
       - --web
     networks:
       - traefik
     ports:
       - "80:80"
       - "443:443"
-      - "3000:3000"
       - "8080:8080"
     volumes:
       - /dev/null:/etc/traefik/traefik.toml
@@ -111,8 +109,6 @@ services:
       labels:
         - "traefik.backend=socketio"
         - "traefik.frontend.rule=Host:socketio.ffaerber.com"
-        - "traefik.frontend.entrypoints=ws"
-        - "traefik.protocol=ws"
         - "traefik.port=3000"
       placement:
         constraints:
