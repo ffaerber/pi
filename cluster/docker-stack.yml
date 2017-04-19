@@ -21,8 +21,8 @@ services:
       - "443:443"
       - "8080:8080"
     volumes:
+      - /dev/null:/etc/traefik/traefik.toml
       - /var/run/docker.sock:/var/run/docker.sock
-      - /dev/null:/traefik.toml
     secrets:
       - private_key
       - certificate_crt
@@ -110,6 +110,7 @@ services:
       labels:
         - "traefik.backend=socketio"
         - "traefik.frontend.rule=Host:socketio.ffaerber.com"
+        - "traefik.frontend.entrypoints=ws"
         - "traefik.protocol=ws"
         - "traefik.port=3000"
       placement:
