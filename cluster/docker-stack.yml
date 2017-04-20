@@ -58,7 +58,9 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - traefik
+      traefik:
+        aliases:
+          - prometheus
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
