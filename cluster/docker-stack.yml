@@ -1,5 +1,23 @@
 version: '3.1'
 
+volumes:
+  redis_data:
+    driver: local
+  ethereum_data:
+    driver: local
+
+networks:
+  traefik:
+    external: true
+
+secrets:
+  certificate_crt:
+    external: true
+  private_key:
+    external: true
+
+
+
 services:
 
   traefik:
@@ -13,6 +31,7 @@ services:
       - --entrypoints=Name:http Address::80
       - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
       - --web
+      - -—web.metrics.prometheus
     networks:
       - traefik
     ports:
@@ -43,6 +62,21 @@ services:
         - "traefik.backend=portainer"
         - "traefik.frontend.rule=Host:portainer.ffaerber.com"
         - "traefik.port=9000"
+      placement:
+        constraints:
+          - node.role == manager
+
+  prometheus:
+    image: fstehle/rpi-prometheus
+    networks:
+      - traefik
+    depends_on:
+      - traefik
+    deploy:
+      labels:
+        - "traefik.backend=prometheus"
+        - "traefik.frontend.rule=Host:prometheus.ffaerber.com"
+        - "traefik.port=9090"
       placement:
         constraints:
           - node.role == manager
@@ -79,20 +113,12 @@ services:
         constraints:
           - node.role != manager
 
-  mosca:
-    image: ffaerber/mqtt-broker-on-arm:latest
-    networks:
-      - traefik
-    depends_on:
-      - traefik
-      - redis
+  mqtt_receiver:
+    image: ffaerber/mqtt-receiver-on-arm:latest
     environment:
-      REDIS_HOST: redis
+      MQTT_BROKER_HOST: mqtt://iot.eclipse.org
+      MQTT_TOPIC: topic
     deploy:
-      labels:
-        - "traefik.backend=mosca"
-        - "traefik.frontend.rule=Host:mosca.ffaerber.com"
-        - "traefik.port=1883"
       placement:
         constraints:
           - node.role == manager
@@ -139,19 +165,3 @@ services:
       placement:
         constraints:
           - node.hostname == pi3
-
-volumes:
-  redis_data:
-    driver: local
-  ethereum_data:
-    driver: local
-
-networks:
-  traefik:
-    external: true
-
-secrets:
-  certificate_crt:
-    external: true
-  private_key:
-    external: true
