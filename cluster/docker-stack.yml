@@ -72,6 +72,16 @@ services:
         constraints:
           - node.role == manager
 
+  node_exporter:
+    image: zeiot/rpi-node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      traefik:
+    deploy:
+      mode: global
+
+
   portainer:
     image: portainer/portainer:arm
     networks:
