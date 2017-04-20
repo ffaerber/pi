@@ -55,6 +55,8 @@ services:
     image: fstehle/rpi-prometheus
     ports:
       - "9090:9090"
+    networks:
+      - traefik
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
