@@ -73,7 +73,7 @@ services:
           - node.role == manager
 
   node_exporter:
-    image: zeiot/rpi-node_exporter
+    image: zeiot/rpi-node_exporter:0.13.0
     ports:
       - "9100:9100"
     networks:
