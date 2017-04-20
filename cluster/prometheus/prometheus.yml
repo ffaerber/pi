@@ -24,9 +24,9 @@ scrape_configs:
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['pi1.local:9090']
 
   - job_name: 'traefik'
     scrape_interval: 1s
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['pi1.local:8080']
