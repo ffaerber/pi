@@ -22,6 +22,15 @@ secrets:
 
 services:
 
+  node_exporter:
+    image: zeiot/rpi-node_exporter:0.13.0
+    ports:
+      - "9100:9100"
+    networks:
+      traefik:
+    deploy:
+      mode: global
+
   traefik:
     image: hypriot/rpi-traefik
     command:
@@ -51,7 +60,51 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.hostname == odroid
+
+  portainer:
+    image: portainer/portainer:arm
+    networks:
+      - traefik
+    depends_on:
+      - traefik
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      labels:
+        - "traefik.backend=portainer"
+        - "traefik.frontend.rule=Host:portainer.ffaerber.com"
+        - "traefik.port=9000"
+      placement:
+        constraints:
+          - node.hostname == pi2
+
+  mqtt_receiver:
+    image: ffaerber/mqtt-receiver-on-arm:latest
+    environment:
+      MQTT_BROKER_HOST: mqtt://iot.eclipse.org
+      MQTT_TOPIC: topic
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == pi3
+
+  socketio:
+    image: ffaerber/socketio-arm:latest
+    environment:
+      DEBUG: socket.io*
+    networks:
+      - traefik
+    depends_on:
+      - traefik
+    deploy:
+      labels:
+        - "traefik.backend=socketio"
+        - "traefik.frontend.rule=Host:socketio.ffaerber.com"
+        - "traefik.port=3000"
+      placement:
+        constraints:
+          - node.hostname == pi1
 
   prometheus:
     image: fstehle/rpi-prometheus
@@ -70,34 +123,34 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.hostname == pi2
 
-  node_exporter:
-    image: zeiot/rpi-node_exporter:0.13.0
+  redis:
+    image: hypriot/rpi-redis
+    networks:
+      - traefik
     ports:
-      - "9100:9100"
-    networks:
-      traefik:
-    deploy:
-      mode: global
-
-
-  portainer:
-    image: portainer/portainer:arm
-    networks:
-      - traefik
-    depends_on:
-      - traefik
+      - "6379:6379"
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      - redis_data:/data
     deploy:
-      labels:
-        - "traefik.backend=portainer"
-        - "traefik.frontend.rule=Host:portainer.ffaerber.com"
-        - "traefik.port=9000"
       placement:
         constraints:
-          - node.role == manager
+          - node.hostname == pi4
+
+  geth:
+    image: ffaerber/geth-arm:latest
+    ports:
+      - "8545:8545"
+      - "30303:30303"
+    volumes:
+      - ethereum_data:/root/.ethereum
+    command: geth --cache=32 --syncmode=light --rpc --rpcaddr "0.0.0.0"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == pi4
+
 
 
   whoami:
@@ -112,9 +165,11 @@ services:
         - "traefik.frontend.rule=Host:whoami.ffaerber.com"
         - "traefik.port=8000"
       replicas: 20
+      update_config:
+        parallelism: 5
       placement:
         constraints:
-          - node.role != manager
+          - node.hostname != odroid
 
   koa_on_arm:
     image: ffaerber/koa-on-arm:latest
@@ -128,59 +183,8 @@ services:
         - "traefik.frontend.rule=Host:koa.ffaerber.com"
         - "traefik.port=3000"
       replicas: 10
+      update_config:
+        parallelism: 2
       placement:
         constraints:
-          - node.role != manager
-
-  mqtt_receiver:
-    image: ffaerber/mqtt-receiver-on-arm:latest
-    environment:
-      MQTT_BROKER_HOST: mqtt://iot.eclipse.org
-      MQTT_TOPIC: topic
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-
-  socketio:
-    image: ffaerber/socketio-arm:latest
-    environment:
-      DEBUG: socket.io*
-    networks:
-      - traefik
-    depends_on:
-      - traefik
-    deploy:
-      labels:
-        - "traefik.backend=socketio"
-        - "traefik.frontend.rule=Host:socketio.ffaerber.com"
-        - "traefik.port=3000"
-      placement:
-        constraints:
-          - node.role == manager
-
-  redis:
-    image: hypriot/rpi-redis
-    networks:
-      - traefik
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == odroid
-
-  geth:
-    image: ffaerber/geth-arm:latest
-    ports:
-      - "8545:8545"
-      - "30303:30303"
-    volumes:
-      - ethereum_data:/root/.ethereum
-    command: geth --cache=32 --syncmode=light --rpc --rpcaddr "0.0.0.0"
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == pi3
+          - node.hostname != odroid
