@@ -164,7 +164,7 @@ services:
         - "traefik.backend=whoami"
         - "traefik.frontend.rule=Host:whoami.ffaerber.com"
         - "traefik.port=8000"
-      replicas: 20
+      replicas: 5
       update_config:
         parallelism: 5
       placement:
@@ -182,7 +182,7 @@ services:
         - "traefik.backend=koa"
         - "traefik.frontend.rule=Host:koa.ffaerber.com"
         - "traefik.port=3000"
-      replicas: 10
+      replicas: 3
       update_config:
         parallelism: 2
       placement:
