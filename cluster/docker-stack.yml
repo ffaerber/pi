@@ -63,7 +63,7 @@ services:
           - node.hostname == odroid
 
   visualizer:
-    image: whatever4711/swarm-visualizer
+    image: yangxuan8282/armhf-visualizer
     networks:
       - traefik
     depends_on:
