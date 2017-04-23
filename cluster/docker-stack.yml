@@ -63,7 +63,7 @@ services:
           - node.hostname == odroid
 
   visualizer:
-    image: alexellis2/visualizer-arm:latest
+    image: alexellis2/visualizer-arm
     networks:
       - traefik
     depends_on:
@@ -77,7 +77,7 @@ services:
         - "traefik.port=8080"
       placement:
         constraints:
-          - node.hostname == pi1
+          - node.hostname != odroid
 
   mqtt_receiver:
     image: ffaerber/mqtt-receiver-on-arm:latest
