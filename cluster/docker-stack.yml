@@ -63,7 +63,7 @@ services:
           - node.hostname == odroid
 
   visualizer:
-    image: alexellis2/visualizer-arm
+    image: whatever4711/swarm-visualizer
     networks:
       - traefik
     depends_on:
