@@ -62,8 +62,8 @@ services:
         constraints:
           - node.hostname == odroid
 
-  portainer:
-    image: portainer/portainer:arm
+  visualizer:
+    image: alexellis2/visualizer-arm:latest
     networks:
       - traefik
     depends_on:
@@ -72,9 +72,9 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock'
     deploy:
       labels:
-        - "traefik.backend=portainer"
-        - "traefik.frontend.rule=Host:portainer.ffaerber.com"
-        - "traefik.port=9000"
+        - "traefik.backend=visualizer"
+        - "traefik.frontend.rule=Host:visualizer.ffaerber.com"
+        - "traefik.port=8080"
       placement:
         constraints:
           - node.hostname == pi1
