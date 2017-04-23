@@ -60,6 +60,7 @@ services:
     deploy:
       placement:
         constraints:
+          - node.role == manager
           - node.hostname == odroid
 
   visualizer:
@@ -75,6 +76,23 @@ services:
         - "traefik.backend=visualizer"
         - "traefik.frontend.rule=Host:visualizer.ffaerber.com"
         - "traefik.port=8080"
+      placement:
+        constraints:
+          - node.role == manager
+
+  portainer:
+    image: portainer/portainer:arm
+    networks:
+      - traefik
+    depends_on:
+      - traefik
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      labels:
+        - "traefik.backend=portainer"
+        - "traefik.frontend.rule=Host:portainer.ffaerber.com"
+        - "traefik.port=9000"
       placement:
         constraints:
           - node.role == manager
@@ -150,8 +168,6 @@ services:
       placement:
         constraints:
           - node.hostname == pi4
-
-
 
   whoami:
     image: hypriot/rpi-whoami
