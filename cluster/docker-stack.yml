@@ -9,8 +9,7 @@ volumes:
     driver: local
 
 networks:
-  traefik:
-    external: true
+  backend:
 
 secrets:
   certificate_crt:
@@ -27,7 +26,7 @@ services:
     ports:
       - "9100:9100"
     networks:
-      traefik:
+      backend:
     deploy:
       mode: global
 
@@ -44,7 +43,7 @@ services:
       - --web
       - --web.metrics.prometheus
     networks:
-      traefik:
+      backend:
         aliases:
           - traefik
     ports:
@@ -66,7 +65,7 @@ services:
   visualizer:
     image: yangxuan8282/armhf-visualizer
     networks:
-      - traefik
+      - backend
     depends_on:
       - traefik
     volumes:
@@ -83,7 +82,7 @@ services:
   portainer:
     image: portainer/portainer:arm
     networks:
-      - traefik
+      - backend
     depends_on:
       - traefik
     volumes:
@@ -112,7 +111,7 @@ services:
     environment:
       DEBUG: socket.io*
     networks:
-      - traefik
+      - backend
     depends_on:
       - traefik
     deploy:
@@ -129,7 +128,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      traefik:
+      backend:
         aliases:
           - prometheus
     volumes:
@@ -146,7 +145,7 @@ services:
   redis:
     image: hypriot/rpi-redis
     networks:
-      - traefik
+      - backend
     ports:
       - "6379:6379"
     volumes:
@@ -172,7 +171,7 @@ services:
   whoami:
     image: hypriot/rpi-whoami
     networks:
-      - traefik
+      - backend
     depends_on:
       - traefik
     deploy:
@@ -190,7 +189,7 @@ services:
   koa_on_arm:
     image: ffaerber/koa-on-arm:latest
     networks:
-      - traefik
+      - backend
     depends_on:
       - traefik
     deploy:
