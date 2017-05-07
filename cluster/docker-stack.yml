@@ -42,6 +42,7 @@ services:
       - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
       - --web
       - --web.metrics.prometheus
+      - --debug
     networks:
       backend:
         aliases:
