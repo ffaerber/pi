@@ -13,9 +13,9 @@ networks:
 
 secrets:
   certificate.crt:
-    external: true # docker secret create certificate.crt certificate.crt
+    external: true
   private.key:
-    external: true # docker secret create private.key private.key
+    external: true
 
 
 
