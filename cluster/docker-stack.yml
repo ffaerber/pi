@@ -12,10 +12,10 @@ networks:
   backend:
 
 secrets:
-  certificate_crt:
-    external: true
-  private_key:
-    external: true
+  certificate.crt:
+    external: true # docker secret create certificate.crt certificate.crt
+  private.key:
+    external: true # docker secret create private.key private.key
 
 
 
@@ -38,8 +38,8 @@ services:
       - --docker.watch
       - --docker.domain=ffaerber.com
       - --defaultEntryPoints=http,https
-      - --entrypoints=Name:http Address::80
-      - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate_crt,/run/secrets/private_key
+      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+      - --entryPoints=Name:https Address::443 TLS:/run/secrets/certificate.crt,/run/secrets/private.key
       - --web
       - --web.metrics.prometheus
       - --debug
