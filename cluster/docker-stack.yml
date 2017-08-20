@@ -52,7 +52,6 @@ services:
       - "443:443"
       - "8080:8080"
     volumes:
-      - /dev/null:/etc/traefik/traefik.toml
       - /var/run/docker.sock:/var/run/docker.sock
     secrets:
       - private_key
@@ -60,8 +59,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
-          - node.hostname == odroid
+          - node.hostname == pi1
 
   visualizer:
     image: yangxuan8282/armhf-visualizer
@@ -185,7 +183,7 @@ services:
         parallelism: 5
       placement:
         constraints:
-          - node.hostname != odroid
+          - node.hostname == pi4
 
   koa_on_arm:
     image: ffaerber/koa-on-arm:latest
@@ -203,4 +201,4 @@ services:
         parallelism: 2
       placement:
         constraints:
-          - node.hostname != odroid
+          - node.hostname == pi4
