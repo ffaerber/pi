@@ -1,0 +1,24 @@
+version: '3.4'
+
+secrets:
+  sync.conf:
+    external: true # docker secret create sync.conf ./secrets/sync.conf
+
+services:
+
+  resilio:
+    image: ffaerber/resilio-arm32v7
+    command: --config /run/secrets/sync.conf
+    ports:
+      - "55555:55555"
+    volumes:
+      - /disk1:/mnt/sync
+    secrets:
+      - sync.conf # docker service rm home_resilio && docker secret rm sync.conf && docker secret create sync.conf ./secrets/sync.conf
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+      placement:
+        constraints:
+          - node.hostname == pi6 # HD volume

@@ -1,0 +1,18 @@
+version: '3.4'
+
+volumes:
+  ethereum_data:
+    driver: local
+
+
+services:
+
+  geth:
+    image: ffaerber/geth-arm
+    command: geth --cache=32 --syncmode=light --rpc --rpcaddr "0.0.0.0"
+    volumes:
+      - ethereum_data:/root/.ethereum
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == pi5

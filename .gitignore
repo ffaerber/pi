@@ -3,7 +3,7 @@
 # compiled output
 /dist
 /tmp
-/cluster/sslforfree
+secrets
 # dependencies
 /node_modules
 

@@ -1,14 +1,14 @@
+
+
 ## Install Docker
 burn SD via CLI or via via etcher.app
-- diskutil list
-- diskutil unmountdisk /dev/disk5
-- sudo dd if=~/Downloads/2017-03-02-raspbian-jessie-lite.img of=/dev/rdisk5 bs=1m
+- flash microSD
 - touch /Volumes/boot/ssh
 - echo gpu_mem=16 >> /Volumes/boot/config.txt
 
 boot pi
 - ssh pi@raspberrypi.local | raspberry
-- sudo apt-get install vim git
+- sudo apt-get update && sudo apt-get install vim git -y
 
 change hostname from raspberry to pi1
 - sudo vim /etc/hosts
@@ -18,26 +18,28 @@ change the password from raspberry to xxx
 - passwd
 
 - sudo reboot
-- cat ~/.ssh/id_rsa.pub | ssh pi@pizero.local 'umask 0077; mkdir -p .ssh; cat >> .ssh/authorized_keys && echo "Key copied"'
+- cat ~/.ssh/id_rsa.pub | ssh pi@monsterborg.local 'umask 0077; mkdir -p .ssh; cat >> .ssh/authorized_keys && echo "Key copied"'
 
-- ssh pi@pi1.local
+- ssh pi@pi5.local
 
-install newest docker  
-- curl -sSL test.docker.com | sh
+- curl -sSL https://get.docker.com | sh
+
 - sudo usermod -aG docker pi
 - sudo systemctl enable docker
 - sudo reboot
 
-docker swarm join \
-    --token SWMTKN-1-64a25tiislewa1xlkbzpvuwdn44oteeqqg1lujmj9k4dzkt2kk-ceqzuu0rdmb8wti5tldth7z2w \
-    [pi1.local]:2377
+
+ssh -nNT -L 9999:/var/run/docker.sock pi@home.ffaerber.com -v
+export DOCKER_HOST=localhost:9999
 
 
 ## Docker
 - Remove Single Image: `docker rmi -f 4244d33b9b0e`
 
 - run container: `docker run -d --name portainer -p 80:9000 -v /var/run/docker.sock:/var/run/docker.sock portainer/portainer:arm`
-docker run -it armhf/ubuntu
+docker run -it ffaerber/geth-arm
+
+
 apt-get update
 apt-get install iputils-ping
 
@@ -52,8 +54,8 @@ docker network create -d overlay mynet
 
 ## Docker Swarm
 https://github.com/ManoMarks/docker-swarm-visualizer
-- create network `docker network create --driver overlay webnet`
-- create service: `docker service create --name whoami --publish 80:8000 hypriot/rpi-whoami`
+- create network `docker network create --driver overlay overnet`
+- create service: `docker service create --name mqtt --network overnet --replicas 2 --publish 1883:1883 ffaerber/mqtt-broker-on-arm`
 
 - create service: `docker service create --name=guid -p=80:9000 --replicas=4 alexellis2/guid-generator-arm:0.1`
 
@@ -63,11 +65,28 @@ https://github.com/ManoMarks/docker-swarm-visualizer
 docker service create --name web --replicas 3 --mount type=bind,src=/etc/hostname,dst=/usr/share/nginx/html/index.html,readonly --publish 80:80 alexellis2/nginx-arm
 
 
+for i in {1..5}; do curl http://ffaerber.mooo.com/whoami; done
+
+
+## docker machine
+
+cat ~/.ssh/id_rsa.pub | ssh pirate@pi1.local 'umask 0077; mkdir -p .ssh; cat >> .ssh/authorized_keys && echo "Key copied"'
+
+docker-machine create \
+  --driver generic \
+  --generic-ip-address 192.168.1.10 \
+  --generic-ssh-key ~/.ssh/id_rsa \
+  --generic-ssh-user pirate \
+  pi1
+
 ## Docker Stack Deploy
 https://docs.docker.com/compose/compose-file/
 
-- docker stack deploy --compose-file docker-compose.yml mycluster
-- docker stack rm mycluster
+- docker network create --driver overlay traefik
+- docker secret create private_key ./private.key
+- docker secret create certificate_crt ./certificate.crt
+- docker stack deploy -c docker-stack.yml home
+- docker stack rm production
 
 
 - start/scale service: `docker service scale counter=3`
@@ -80,7 +99,11 @@ https://docs.docker.com/compose/compose-file/
 - get service info `docker service inspect whoami`
 - `docker service ps whoami`
 
-- tail logs from running conatiner `sudo docker exec -i -t 665b4a1e17b6 /bin/bash`
+- tail logs from running conatiner `sudo docker exec -i -t b5e6dbb35417 /bin/bash`
+
+docker logs b5e6dbb35417 -f
+
+
 
 ## Docker Compose bundles for Swarm Mode
 - https://docs.docker.com/compose/bundles/
@@ -89,6 +112,7 @@ https://docs.docker.com/compose/compose-file/
 - Stop Cluster via Docker Compose: `docker-compose down -v`
 
 ## Docker CleanUp Commands
+- `docker system prune`
 - Stop all Containers: `docker stop $(docker ps -a -q)`
 - Remove all Containers: `docker rm $(docker ps -a -q)`
 - Remove all Images: `docker rmi $(docker images)`
@@ -103,18 +127,3 @@ https://docs.docker.com/compose/compose-file/
 - Docker Host
 - OS
 - Hardware
-
-# Links
-- https://technologyconversations.com/2016/08/01/integrating-proxy-with-docker-swarm-tour-around-docker-1-12-series/
-- http://blog.scottlogic.com/2016/08/30/docker-1-12-swarm-mode-round-robin.html
-- https://github.com/alexellis/swarmmode-tests/blob/master/arm/README.md
-- http://blog.alexellis.io/live-deep-dive-pi-swarm/
-- http://blog.hypriot.com/getting-started-with-docker-and-mac-on-the-raspberry-pi/
-- https://medium.com/@bossjones/how-i-setup-a-raspberry-pi-3-cluster-using-the-new-docker-swarm-mode-in-29-minutes-aa0e4f3b1768#.2xvqrcykt
-- https://blog.codeship.com/nginx-reverse-proxy-docker-swarm-clusters/#disqus_thread
-
-# Flash SDcard
-- Locate SD Card: `diskutil list`
-- Unmount the SD Card: `diskutil unmountDisk /dev/disk3`
-- Burn Image on SDCard: `sudo dd bs=1m if=~/Downloads/pi-image.img of=/dev/rdisk3`
-- To see progress while it is running just type control-t
